@@ -125,12 +125,12 @@
       <div class="box">
 
       <!-- Aqui fica o conteudo -->
-        <form class="form-horizontal">
+        <form class="form-horizontal" method="post" action="cad_servico.asp">
           <div class="box-body">
             <div class="form-group">
               <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputEmail3" placeholder="Serviço">
+                <input type="text" class="form-control" name="servico" id="servico" placeholder="Serviço">
               </div>
             </div>
           </div>

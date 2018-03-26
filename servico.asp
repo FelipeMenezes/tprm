@@ -1,3 +1,33 @@
+<%
+Response.Buffer  = true
+Response.Expires = 0
+Session.lcId     = 1033
+%>
+
+<!-- #include file="includes/conexao.asp" -->
+
+<%
+        
+    ' Seleciona os dados do evento
+    strSQL = "select * from servico"
+    
+    ' Executa a string sql.
+    Set ObjRst = conDB.execute(strSQL)
+
+        
+    ' Verifica se não é final de arquivo. 
+    if not ObjRst.EOF then
+          
+      ' Carrega as informações
+      name = ObjRst("tipo_servico")
+
+    end if
+    
+    set ObjRst = nothing
+    
+    Response.Write(name)
+
+%>
 <!DOCTYPE html>
 <html>
 <head>
