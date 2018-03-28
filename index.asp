@@ -1,3 +1,14 @@
+<%
+  strStatus = Request.Item("login")
+  strMsg = ""
+  select case trim(ucase(strStatus))
+    case "ERRO"
+      strMsg = "Email ou Senha errada, Favor verificar"
+    case else
+      strMsg = ""
+  end select
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,15 +47,23 @@
   <div class="login-box-body">
     <p class="login-box-msg">Favor, informar login e senha</p>
 
-    <form action="dashboard.asp" method="post">
+    <form action="login.asp" method="post">
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Email">
+        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="password" class="form-control" name="senha" id="senha" placeholder="Senha" required>
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
+
+      <% if trim(strMsg) <> "" then %>
+          <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <%=strMsg%>      
+          </div>
+      <% end if %>
+
       <div class="row">
         <!-- /.col -->
         <div class="col-xs-4">

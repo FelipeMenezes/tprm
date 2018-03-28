@@ -1,7 +1,13 @@
 <%
-Response.Buffer  = true
-Response.Expires = 0
-Session.lcId     = 1033
+
+  If NOT Session("logado") = true Then
+    Response.redirect("index.asp")
+    Response.End
+  End If
+
+  Response.Buffer  = true
+  Response.Expires = 0
+  Session.lcId     = 1033
 %>
 
 <!-- #include file="includes/conexao.asp" -->
@@ -85,8 +91,7 @@ Session.lcId     = 1033
         <ul class="nav navbar-nav">
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
+              <span class="hidden-xs"><%=Session("nome")%></span>
             </a>
             <ul class="dropdown-menu">
               <!-- Menu Body -->
@@ -96,7 +101,7 @@ Session.lcId     = 1033
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Logout</a>
+                  <a href="logout.asp" class="btn btn-default btn-flat">Logout</a>
                 </div>
               </li>
             </ul>
