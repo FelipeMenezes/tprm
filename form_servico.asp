@@ -1,3 +1,34 @@
+<%
+  Response.Buffer  = true
+  Response.Expires = 0
+  Session.lcId     = 1033
+%>
+<!-- #include file="includes/conexao.asp" -->
+<%
+  
+  id   = Request.QueryString("id")
+  if (trim(id) = "") or (isnull(id)) then id = 0 end if
+  ' Consiste o Evento
+  if (cint(id) <> 0) then
+        
+    ' Seleciona os dados do servico
+    strSQL = "SELECT * FROM servico where id_servico = " & id
+    
+    ' Executa a string sql.
+    Set ObjRst = conDB.execute(strSQL)
+        
+    ' Verifica se não é final de arquivo. 
+    if not ObjRst.EOF then
+          
+      ' Carrega as informações do servico
+      id          = ObjRst("id_servico")
+      servico     = ObjRst("tipo_servico")
+    end if
+    
+    set ObjRst = nothing
+  
+end if
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -130,12 +161,13 @@
             <div class="form-group">
               <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="servico" id="servico" placeholder="Serviço">
+                <input type="text" class="form-control" name="servico" id="servico" placeholder="Ex: Pintura Interna" value="<%=servico%>" required>
               </div>
             </div>
           </div>
           <!-- /.box-body -->
           <div class="box-footer">
+            <input type="hidden" name="id" id="id" value="<%=id%>">
             <button type="submit" class="btn btn-info pull-right">Salvar</button>
             <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='servico.asp';">Voltar</button>
           </div>
@@ -216,3 +248,8 @@
 </script>
 </body>
 </html>
+
+<%
+  conDB.close()
+  set conDB = Nothing
+%>

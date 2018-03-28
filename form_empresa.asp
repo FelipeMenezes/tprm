@@ -1,25 +1,43 @@
 <%
-Response.Buffer  = true
-Response.Expires = 0
-Session.lcId     = 1033
+  Response.Buffer  = true
+  Response.Expires = 0
+  Session.lcId     = 1033
 %>
 
 <!-- #include file="includes/conexao.asp" -->
 
 <%
-  strStatus = Request.Item("strStatus")
-  strMsg = ""
-  select case trim(ucase(strStatus))
-    case "INC"
-      strMsg = "Empresa cadastrada com Sucesso"
-    case "ALT"
-      strMsg = "Empresa alterada com Sucesso"
-    case "EXC"
-      strMsg = "Empresa excluída com Sucesso"
-    case else
-      strMsg = ""
-  end select
+  
+  id   = Request.QueryString("id")
+  if (trim(id) = "") or (isnull(id)) then id = 0 end if
+  ' Consiste o Evento
+  if (cint(id) <> 0) then
+        
+    ' Seleciona os dados do empresa
+    strSQL = "SELECT * FROM empresa where id_empresa = " & id
+    
+    ' Executa a string sql.
+    Set ObjRst = conDB.execute(strSQL)
+
+    ' Verifica se não é final de arquivo. 
+    if not ObjRst.EOF then
+          
+      ' Carrega as informações do servico
+      id          = ObjRst("id_empresa")
+      empresa     = ObjRst("empresa")
+      id_servico  = ObjRst("id_servico")
+      descricao   = ObjRst("descricao")
+      valor       = ObjRst("valor")
+
+
+    end if
+    
+    set ObjRst = nothing
+  
+  end if
+
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +46,7 @@ Session.lcId     = 1033
   <title>TPRM | Empresa</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->  
+  <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
@@ -135,7 +153,7 @@ Session.lcId     = 1033
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Cadastro de Empresas
+        Cadastro de Empresa
         <small>Painel</small>
       </h1>
     </section>
@@ -144,78 +162,58 @@ Session.lcId     = 1033
     <section class="content">
       <!-- Small boxes (Stat box) -->
 
-      <% if trim(strMsg) <> "" then %>
-          <div class="alert alert-success">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-            <%=strMsg%>      
-          </div>
-      <% end if %>
-
       <div class="box">
+
       <!-- Aqui fica o conteudo -->
-        <div class="col col-lg-2" style="margin-top:10px">
-          <button type="button" class="btn btn-block btn-primary" onclick="javascript: location.href='form_empresa.asp?id=0';">Cadastro</button>
-        </div>
+        <form class="form-horizontal" method="post" action="cad_empresa.asp">
+          <div class="box-body">
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Empresa</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="empresa" id="empresa" placeholder="Empresa" value="<%=empresa%>"required>
+              </div>
+            </div>
+            <div class="form-group">
+                 <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
+                  <div class="col-sm-10">
+                    <select name="id_servico" class="form-control">
+                      <%
+                        strSQL = "SELECT * FROM servico"
+                        set ObjRst = conDB.execute(strSQL)
+                        do while not ObjRst.EOF
+                      %>
+                      <option value="<%=ObjRst("id_servico")%>"><%=ObjRst("tipo_servico")%></option>
+                      <%
+                        ObjRst.MoveNext()
+                        loop
+                        set ObjRst = Nothing
+                      %>
+                    </select>
+                  </div>  
+            </div>
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Descrição</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="descricao" id="descricao" placeholder="Descricao" value="<%=descricao%>" required>
+                </div>
+            </div>
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Valor(R$)</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="valor" id="valor" placeholder="Valor" value="<%=valor%>" required>
+                </div>
+            </div>
 
-        <div class="box-body">
-          <table id="table_empresa" class="table table-bordered table-hover">
-            <thead>
-            <tr>
-              <th>Empresa</th>
-              <th>Tipo Serviço</th>
-              <th>Descrição</th>
-              <th>Valor(R$)</th>
-              <th>Ação</th>
-            </tr>
-            </thead>
-            <tbody>
-            <%
-              strSQL = "SELECT * FROM empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico"
-              set ObjRst = conDB.execute(strSQL)
-              do while not ObjRst.EOF
-            %>
-            <tr>
-              <td><%=ObjRst("empresa")%></td>
-              <td><%=ObjRst("tipo_servico")%></td>
-              <td><%=ObjRst("descricao")%></td>
-              <td><%=FormatCurrency(ObjRst("valor"),2)%></td>
-              <td>
-                <a href="form_empresa.asp?id=<%=ObjRst("id_empresa")%>" class="btn btn-success" alt="Editar Empresa" title="Editar Empresa"><i class="glyphicon glyphicon-pencil"></i></a>
-                <a data-href="exc_empresa.asp?id=<%=ObjRst("id_empresa")%>" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" alt="Excluir Empresa" title="Excluir Empresa"><i class="glyphicon glyphicon-remove"></i></a>
-              </td>
-            </tr>
-          <%
-            ObjRst.MoveNext()
-            loop
-            set ObjRst = Nothing
-          %>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-
-
-      </div>
-
-    <!-- modal Exclusão-->
-    <div class="modal fade stick-up" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header clearfix text-left">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
-            </button>
-            <h5>Confirmação <span class="semi-bold">da Empresa</span></h5>
           </div>
-          <div class="modal-body">
-            <p>Confirmar a exclusão da Empresa?</p>
-          </div>                
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <a class="btn btn-danger btn-deletar">Deletar</a>
+          <!-- /.box-body -->
+          <div class="box-footer">
+            <input type="hidden" name="id" id="id" value="<%=id%>">
+            <button type="submit" class="btn btn-info pull-right">Salvar</button>
+            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='empresa.asp';">Voltar</button>
           </div>
-        </div>
+      </form>
+      
       </div>
-    </div>
 
     </section>
     <!-- /.content -->
@@ -238,6 +236,9 @@ Session.lcId     = 1033
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- novo -->
+<script src="bower_components/jquery/dist/jquery.maskMoney.js"></script>
+
 <!-- jQuery UI 1.11.4 -->
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -276,10 +277,9 @@ Session.lcId     = 1033
 <script src="dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
-
 <script>
   $(function () {
-    $('#table_empresa').DataTable({
+    $('#table_servico').DataTable({
       'paging'      : true,
       'lengthChange': false,
       'searching'   : false,
@@ -289,14 +289,17 @@ Session.lcId     = 1033
     })
   })
 </script>
-  <script>
-    $(function()
-    { 
-      $('#confirm-delete').on('show.bs.modal', function(e) {
-        $(this).find('.btn-deletar').attr('href', $(e.relatedTarget).data('href'));
-        });
-    });
-  </script>
+
+<script>
+    $(function(){
+        $("#valor").maskMoney({thousands:'', decimal:'.'});
+    })
+</script>
 
 </body>
 </html>
+
+<%
+  conDB.close()
+  set conDB = Nothing
+%>

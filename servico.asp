@@ -7,27 +7,20 @@ Session.lcId     = 1033
 <!-- #include file="includes/conexao.asp" -->
 
 <%
-        
-    ' Seleciona os dados do evento
-    strSQL = "select * from servico"
-    
-    ' Executa a string sql.
-    Set ObjRst = conDB.execute(strSQL)
-
-        
-    ' Verifica se não é final de arquivo. 
-    if not ObjRst.EOF then
-          
-      ' Carrega as informações
-      name = ObjRst("tipo_servico")
-
-    end if
-    
-    set ObjRst = nothing
-    
-    Response.Write(name)
-
+  strStatus = Request.Item("strStatus")
+  strMsg = ""
+  select case trim(ucase(strStatus))
+    case "INC"
+      strMsg = "Serviço cadastrado com Sucesso"
+    case "ALT"
+      strMsg = "Serviço alterado com Sucesso"
+    case "EXC"
+      strMsg = "Serviço excluído com Sucesso"
+    case else
+      strMsg = ""
+  end select
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -152,10 +145,17 @@ Session.lcId     = 1033
     <section class="content">
       <!-- Small boxes (Stat box) -->
 
+      <% if trim(strMsg) <> "" then %>
+          <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <%=strMsg%>      
+          </div>
+      <% end if %>
+
       <div class="box">
 
         <div class="col col-lg-2" style="margin-top:10px">
-          <button type="button" class="btn btn-block btn-primary" onclick="javascript: location.href='form_servico.asp';">Cadastro</button>
+          <button type="button" class="btn btn-block btn-primary" onclick="javascript: location.href='form_servico.asp?id=0';">Cadastro</button>
         </div>
 
       <!-- Aqui fica o conteudo -->
@@ -163,23 +163,52 @@ Session.lcId     = 1033
           <table id="table_servico" class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>#</th>
               <th>Tipo Serviço</th>
+              <th>Ação</th>
             </tr>
             </thead>
             <tbody>
+            <%
+              strSQL = "SELECT * FROM servico"
+              set ObjRst = conDB.execute(strSQL)
+              do while not ObjRst.EOF
+            %>
             <tr>
-              <td>1</td>
-              <td>Pintura</td>
+              <td><%=ObjRst("tipo_servico")%></td>
+              <td>
+                <a href="form_servico.asp?id=<%=ObjRst("id_servico")%>" class="btn btn-success" alt="Editar Servico" title="Editar Serviço"><i class="glyphicon glyphicon-pencil"></i></a>
+                <a data-href="exc_servico.asp?id=<%=ObjRst("id_servico")%>" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" alt="Excluir Servico" title="Excluir Serviço"><i class="glyphicon glyphicon-remove"></i></a>
+              </td>
             </tr>
-            <tr>
-              <td>2</td>
-              <td>Pedreiro</td>
-            </tr>
+          <%
+            ObjRst.MoveNext()
+            loop
+            set ObjRst = Nothing
+          %>
             </tfoot>
           </table>
         </div>
       </div>
+
+    <!-- modal Exclusão-->
+    <div class="modal fade stick-up" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header clearfix text-left">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+            </button>
+            <h5>Confirmação <span class="semi-bold">de Exclusão</span></h5>
+          </div>
+          <div class="modal-body">
+            <p>Confirmar a exclusão do serviço?</p>
+          </div>                
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <a class="btn btn-danger btn-deletar">Deletar</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     </section>
     <!-- /.content -->
@@ -252,5 +281,13 @@ Session.lcId     = 1033
     })
   })
 </script>
+  <script>
+    $(function()
+    { 
+      $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('.btn-deletar').attr('href', $(e.relatedTarget).data('href'));
+        });
+    });
+  </script>
 </body>
 </html>
