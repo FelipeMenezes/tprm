@@ -118,6 +118,7 @@
     <section class="sidebar">
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
+        
         <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Empresas/Seviços</span>
@@ -130,6 +131,19 @@
             <li class="active"><a href="empresa.asp"><i class="fa fa-circle-o"></i> Empresas</a></li>
           </ul>
         </li>
+
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-tag"></i> <span>Usuário</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="usuario.asp"><i class="fa fa-circle-o"></i> Usuário</a></li>
+          </ul>
+        </li>
+        
       </ul>
     </section>
     <!-- /.sidebar -->

@@ -18,7 +18,7 @@
   if (cint(id) <> 0) then
         
     ' Seleciona os dados do servico
-    strSQL = "SELECT * FROM servico where id_servico = " & id
+    strSQL = "SELECT * FROM usuario where id_usuario = " & id
     
     ' Executa a string sql.
     Set ObjRst = conDB.execute(strSQL)
@@ -26,9 +26,12 @@
     ' Verifica se não é final de arquivo. 
     if not ObjRst.EOF then
           
-      ' Carrega as informações do servico
-      id          = ObjRst("id_servico")
-      servico     = ObjRst("tipo_servico")
+      ' Carrega as informações do usuário
+      id            = ObjRst("id_usuario")
+      nome          = ObjRst("nome")
+      email         = ObjRst("email")
+      senha         = ObjRst("senha")
+      tipo_usuario  = ObjRst("tipo_usuario")
     end if
     
     set ObjRst = nothing
@@ -40,7 +43,7 @@ end if
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TPRM | Serviço</title>
+  <title>TPRM | Usuário</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -128,7 +131,7 @@ end if
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
         
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Empresas/Seviços</span>
             <span class="pull-right-container">
@@ -141,7 +144,7 @@ end if
           </ul>
         </li>
 
-        <li class="treeview">
+        <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Usuário</span>
             <span class="pull-right-container">
@@ -163,7 +166,7 @@ end if
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Cadastro de Serviços
+        Cadastro de Usuário
         <small>Painel</small>
       </h1>
     </section>
@@ -175,20 +178,48 @@ end if
       <div class="box">
 
       <!-- Aqui fica o conteudo -->
-        <form class="form-horizontal" method="post" action="cad_servico.asp">
+        <form class="form-horizontal" method="post" action="cad_usuario.asp">
           <div class="box-body">
             <div class="form-group">
-              <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
+              <label for="inputEmail3" class="col-sm-2 control-label">Nome</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="servico" id="servico" placeholder="Ex: Pintura Interna" value="<%=servico%>" required>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Ex: Heloisa Mota" value="<%=nome%>" required>
               </div>
             </div>
+            
+            <div class="form-group">  
+              <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+              <div class="col-sm-10">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Ex: heloisa@gmail.com" value="<%=email%>" required>
+              </div>
+            </div> 
+
+            <div class="form-group">  
+              <label for="inputEmail3" class="col-sm-2 control-label">Senha</label>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" name="senha" id="senha" value="<%=senha%>" required>
+              </div>
+            </div> 
+
+            <div class="form-group">  
+              <label for="inputEmail3" class="col-sm-2 control-label">Senha</label>
+              <div class="col-sm-10">
+
+                <select name="tipo_usuario" class="form-control">
+                  <option value="1">Usuário</option>
+                  <option value="2">Analista</option>
+                  <option value="3">Administrador</option>
+                </select>
+
+              </div>
+            </div> 
+
           </div>
           <!-- /.box-body -->
           <div class="box-footer">
             <input type="hidden" name="id" id="id" value="<%=id%>">
             <button type="submit" class="btn btn-info pull-right">Salvar</button>
-            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='servico.asp';">Voltar</button>
+            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='usuario.asp';">Voltar</button>
           </div>
       </form>
       

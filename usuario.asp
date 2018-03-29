@@ -1,5 +1,5 @@
 <%
-  
+
   If NOT Session("logado") = true Then
     Response.redirect("index.asp")
     Response.End
@@ -9,41 +9,32 @@
   Response.Expires = 0
   Session.lcId     = 1033
 %>
+
 <!-- #include file="includes/conexao.asp" -->
+
 <%
-  
-  id   = Request.QueryString("id")
-  if (trim(id) = "") or (isnull(id)) then id = 0 end if
-  ' Consiste o Evento
-  if (cint(id) <> 0) then
-        
-    ' Seleciona os dados do servico
-    strSQL = "SELECT * FROM servico where id_servico = " & id
-    
-    ' Executa a string sql.
-    Set ObjRst = conDB.execute(strSQL)
-        
-    ' Verifica se não é final de arquivo. 
-    if not ObjRst.EOF then
-          
-      ' Carrega as informações do servico
-      id          = ObjRst("id_servico")
-      servico     = ObjRst("tipo_servico")
-    end if
-    
-    set ObjRst = nothing
-  
-end if
+  strStatus = Request.Item("strStatus")
+  strMsg = ""
+  select case trim(ucase(strStatus))
+    case "INC"
+      strMsg = "Usuário cadastrado com Sucesso"
+    case "ALT"
+      strMsg = "Usuário alterado com Sucesso"
+    case "EXC"
+      strMsg = "Usuário excluído com Sucesso"
+    case else
+      strMsg = ""
+  end select
 %>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TPRM | Serviço</title>
+  <title>TPRM | Usuário</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->
+  <!-- Bootstrap 3.3.7 -->  
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
@@ -128,7 +119,7 @@ end if
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
         
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Empresas/Seviços</span>
             <span class="pull-right-container">
@@ -136,12 +127,12 @@ end if
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="active"><a href="servico.asp"><i class="fa fa-circle-o"></i> Serviços</a></li>
-            <li><a href="empresa.asp"><i class="fa fa-circle-o"></i> Empresas</a></li>
+            <li><a href="servico.asp"><i class="fa fa-circle-o"></i> Serviços</a></li>
+            <li class="active"><a href="empresa.asp"><i class="fa fa-circle-o"></i> Empresas</a></li>
           </ul>
         </li>
 
-        <li class="treeview">
+        <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Usuário</span>
             <span class="pull-right-container">
@@ -152,7 +143,7 @@ end if
             <li><a href="usuario.asp"><i class="fa fa-circle-o"></i> Usuário</a></li>
           </ul>
         </li>
-
+        
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -163,7 +154,7 @@ end if
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Cadastro de Serviços
+        Cadastro de Usuário
         <small>Painel</small>
       </h1>
     </section>
@@ -172,27 +163,91 @@ end if
     <section class="content">
       <!-- Small boxes (Stat box) -->
 
-      <div class="box">
+      <% if trim(strMsg) <> "" then %>
+          <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <%=strMsg%>      
+          </div>
+      <% end if %>
 
+      <div class="box">
       <!-- Aqui fica o conteudo -->
-        <form class="form-horizontal" method="post" action="cad_servico.asp">
-          <div class="box-body">
-            <div class="form-group">
-              <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" name="servico" id="servico" placeholder="Ex: Pintura Interna" value="<%=servico%>" required>
-              </div>
-            </div>
-          </div>
-          <!-- /.box-body -->
-          <div class="box-footer">
-            <input type="hidden" name="id" id="id" value="<%=id%>">
-            <button type="submit" class="btn btn-info pull-right">Salvar</button>
-            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='servico.asp';">Voltar</button>
-          </div>
-      </form>
-      
+        <div class="col col-lg-2" style="margin-top:10px">
+          <button type="button" class="btn btn-block btn-primary" onclick="javascript: location.href='form_usuario.asp?id=0';">Cadastro</button>
+        </div>
+
+        <div class="box-body">
+          <table id="table_usuario" class="table table-bordered table-hover">
+            <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Tipo Usuário</th>
+              <th>Ação</th>
+            </tr>
+            </thead>
+            <tbody>
+            <%
+              strSQL = "SELECT * FROM usuario"
+              set ObjRst = conDB.execute(strSQL)
+              do while not ObjRst.EOF
+            %>
+            <tr>
+              <td><%=ObjRst("nome")%></td>
+              <td><%=ObjRst("email")%></td>
+
+              <%
+
+                Select Case ObjRst("tipo_usuario")
+                   Case 1
+                      tipo_usuario = "Usuário"
+                   Case 2
+                      tipo_usuario = "Analista"
+                   Case Else
+                      tipo_usuario = "Administrador"
+                End Select
+
+              %>
+
+              <td><%=tipo_usuario%></td>
+              
+              <td>
+                <a href="form_usuario.asp?id=<%=ObjRst("id_usuario")%>" class="btn btn-success" alt="Editar Usuario" title="Editar Usuario"><i class="glyphicon glyphicon-pencil"></i></a>
+                <a data-href="exc_usuario.asp?id=<%=ObjRst("id_usuario")%>" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" alt="Excluir Usuario" title="Excluir Usuario"><i class="glyphicon glyphicon-remove"></i></a>
+              </td>
+            </tr>
+          <%
+            ObjRst.MoveNext()
+            loop
+            set ObjRst = Nothing
+          %>
+            </tfoot>
+          </table>
+        </div>
       </div>
+
+
+      </div>
+
+    <!-- modal Exclusão-->
+    <div class="modal fade stick-up" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header clearfix text-left">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+            </button>
+            <h5>Confirmação <span class="semi-bold">do Usuário</span></h5>
+          </div>
+          <div class="modal-body">
+            <p>Confirmar a exclusão do Usuário?</p>
+          </div>                
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            <a class="btn btn-danger btn-deletar">Deletar</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     </section>
     <!-- /.content -->
@@ -253,9 +308,10 @@ end if
 <script src="dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
+
 <script>
   $(function () {
-    $('#table_servico').DataTable({
+    $('#table_usuario').DataTable({
       'paging'      : true,
       'lengthChange': false,
       'searching'   : false,
@@ -265,10 +321,14 @@ end if
     })
   })
 </script>
+  <script>
+    $(function()
+    { 
+      $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('.btn-deletar').attr('href', $(e.relatedTarget).data('href'));
+        });
+    });
+  </script>
+
 </body>
 </html>
-
-<%
-  conDB.close()
-  set conDB = Nothing
-%>
