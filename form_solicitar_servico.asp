@@ -94,7 +94,7 @@
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="dashboard.asp" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>T</b>M</span>
       <!-- logo for regular state and mobile devices -->
@@ -137,6 +137,10 @@
     <section class="sidebar">
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
+
+        <%
+          if Session("tipo_usuario") = 3 then 
+        %> 
         
         <li class="treeview">
           <a href="#">
@@ -163,6 +167,14 @@
           </ul>
         </li>
 
+        <%
+          end if
+        %>
+
+        <%
+          if Session("tipo_usuario") = 3 OR Session("tipo_usuario") = 1 then 
+        %>
+
         <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Solicitação de Serviço</span>
@@ -176,6 +188,14 @@
           </ul>
         </li>
 
+        <%
+          end if
+        %>
+
+        <%
+          if Session("tipo_usuario") = 3 OR Session("tipo_usuario") = 2 then 
+        %>
+
         <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Analise de Solicitações</span>
@@ -187,6 +207,10 @@
             <li><a href="analise.asp"><i class="fa fa-circle-o"></i> Analise</a></li>
           </ul>
         </li>
+
+        <%
+          end if        
+        %>
 
       </ul>
     </section>

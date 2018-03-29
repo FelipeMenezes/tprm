@@ -87,7 +87,7 @@ end if
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="dashboard.asp" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>T</b>M</span>
       <!-- logo for regular state and mobile devices -->
@@ -227,7 +227,7 @@ end if
             </div> 
 
             <div class="form-group">  
-              <label for="inputEmail3" class="col-sm-2 control-label">Senha</label>
+              <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Usuário</label>
               <div class="col-sm-10">
 
                 <select name="tipo_usuario" class="form-control">

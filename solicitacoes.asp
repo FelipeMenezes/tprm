@@ -75,7 +75,7 @@
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="dashboard.asp" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>T</b>M</span>
       <!-- logo for regular state and mobile devices -->
@@ -119,6 +119,11 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
         
+        <%
+          if Session("tipo_usuario") = 3 then 
+        %> 
+
+
         <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Empresas/Seviços</span>
@@ -144,6 +149,14 @@
           </ul>
         </li>
 
+        <%
+          end if
+        %>
+
+        <%
+          if Session("tipo_usuario") = 3 OR Session("tipo_usuario") = 1 then 
+        %>
+
         <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Solicitação de Serviço</span>
@@ -157,6 +170,14 @@
           </ul>
         </li>
 
+        <%
+          end if
+        %>
+
+        <%
+          if Session("tipo_usuario") = 3 OR Session("tipo_usuario") = 2 then 
+        %>
+
         <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Analise de Solicitações</span>
@@ -168,6 +189,10 @@
             <li><a href="analise.asp"><i class="fa fa-circle-o"></i> Analise</a></li>
           </ul>
         </li>
+
+        <%
+          end if        
+        %>
         
       </ul>
     </section>
@@ -201,6 +226,7 @@
           <table id="table_empresa" class="table table-bordered table-hover">
             <thead>
             <tr>
+              <th>Solicitante</th>
               <th>Empresa</th>
               <th>Tipo Serviço</th>
               <th>Descrição</th>
@@ -210,12 +236,21 @@
             </tr>
             </thead>
             <tbody>
+            
             <%
+
+            IF Session("tipo_usuario") = 3 then
               strSQL = "SELECT * FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico"
+            else
+              strSQL = "SELECT * FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico where usuario.id_usuario="&Session("id_usuario")
+            end if
+
               set ObjRst = conDB.execute(strSQL)
               do while not ObjRst.EOF
+            
             %>
             <tr>
+              <td><%=ObjRst("nome")%></td>
               <td><%=ObjRst("empresa")%></td>
               <td><%=ObjRst("tipo_servico")%></td>
               <td><%=ObjRst("descricao")%></td>
