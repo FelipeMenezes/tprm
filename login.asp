@@ -27,6 +27,7 @@ senha      = Request.Form("senha")
 
 		Session("nome")         = ObjRst("nome") 	     'Grava na Sessão o nome do usuário
 		Session("tipo_usuario") = ObjRst("tipo_usuario") 'Grava na Sessão o tipo de usuário
+		Session("id_usuario")   = ObjRst("id_usuario")   'Grava na Sessão o id do usuário
 		Session("logado")       = true 					 'Grava na Sessão o usuário logado como true, impedindo que acesse a página sem efetuar o login
 		
 		Response.redirect("dashboard.asp")

@@ -9,7 +9,9 @@
   Response.Expires = 0
   Session.lcId     = 1033
 %>
+
 <!-- #include file="includes/conexao.asp" -->
+
 <%
   
   id   = Request.QueryString("id")
@@ -17,30 +19,38 @@
   ' Consiste o Evento
   if (cint(id) <> 0) then
         
-    ' Seleciona os dados do servico
-    strSQL = "SELECT * FROM servico where id_servico = " & id
+    ' Seleciona os dados do empresa
+    strSQL = "SELECT * FROM empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico where id_empresa = " & id
     
     ' Executa a string sql.
     Set ObjRst = conDB.execute(strSQL)
-        
+
     ' Verifica se não é final de arquivo. 
     if not ObjRst.EOF then
           
       ' Carrega as informações do servico
-      id          = ObjRst("id_servico")
-      servico     = ObjRst("tipo_servico")
+      id           = ObjRst("id_empresa")
+      empresa      = ObjRst("empresa")
+      id_servico   = ObjRst("id_servico")
+      descricao    = ObjRst("descricao")
+      valor        = ObjRst("valor")
+      tipo_servico = ObjRst("tipo_servico")
+
+
     end if
     
     set ObjRst = nothing
   
-end if
+  end if
+
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TPRM | Serviço</title>
+  <title>TPRM | Solicitar Serviço</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -128,7 +138,7 @@ end if
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
         
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Empresas/Seviços</span>
             <span class="pull-right-container">
@@ -136,8 +146,8 @@ end if
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="active"><a href="servico.asp"><i class="fa fa-circle-o"></i> Serviços</a></li>
-            <li><a href="empresa.asp"><i class="fa fa-circle-o"></i> Empresas</a></li>
+            <li><a href="servico.asp"><i class="fa fa-circle-o"></i> Serviços</a></li>
+            <li class="active"><a href="empresa.asp"><i class="fa fa-circle-o"></i> Empresas</a></li>
           </ul>
         </li>
 
@@ -153,7 +163,7 @@ end if
           </ul>
         </li>
 
-        <li class="treeview">
+        <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Solicitação de Serviço</span>
             <span class="pull-right-container">
@@ -176,7 +186,7 @@ end if
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Cadastro de Serviços
+        Solicitar Serviço
         <small>Painel</small>
       </h1>
     </section>
@@ -188,20 +198,43 @@ end if
       <div class="box">
 
       <!-- Aqui fica o conteudo -->
-        <form class="form-horizontal" method="post" action="cad_servico.asp">
+        <form class="form-horizontal" method="post" action="cad_solicitar_servico.asp">
           <div class="box-body">
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Empresa</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="empresa" id="empresa" placeholder="Empresa" value="<%=empresa%>" readonly>
+              </div>
+            </div>
+
+            <!-- aqui -->
             <div class="form-group">
               <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="servico" id="servico" placeholder="Ex: Pintura Interna" value="<%=servico%>" required>
+                <input type="text" class="form-control" name="tipo_servico" id="tipo_servico" placeholder="Tipo de Serviço" value="<%=tipo_servico%>"readonly>
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Descrição</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="descricao" id="descricao" placeholder="Descricao" value="<%=descricao%>" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-2 control-label">Valor(R$)</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="valor" id="valor" placeholder="Valor" value="<%=valor%>" readonly>
+                </div>
+            </div>
+
           </div>
           <!-- /.box-body -->
           <div class="box-footer">
+            <input type="hidden" name="id_usuario" id="id_usuario" value="<%=Session("id_usuario")%>">
             <input type="hidden" name="id" id="id" value="<%=id%>">
             <button type="submit" class="btn btn-info pull-right">Salvar</button>
-            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='servico.asp';">Voltar</button>
+            <button type="button" class="btn pull-right" style="margin-right:10px" onclick="javascript: location.href='solicitar.asp';">Voltar</button>
           </div>
       </form>
       
@@ -228,6 +261,9 @@ end if
 
 <!-- jQuery 3 -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- novo -->
+<script src="bower_components/jquery/dist/jquery.maskMoney.js"></script>
+
 <!-- jQuery UI 1.11.4 -->
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -278,6 +314,13 @@ end if
     })
   })
 </script>
+
+<script>
+    $(function(){
+        $("#valor").maskMoney({thousands:'', decimal:'.'});
+    })
+</script>
+
 </body>
 </html>
 
