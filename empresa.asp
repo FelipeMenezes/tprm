@@ -156,6 +156,18 @@
             <li><a href="solicitacoes.asp"><i class="fa fa-circle-o"></i> Solicitações</a></li>
           </ul>
         </li>
+
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-tag"></i> <span>Analise de Solicitações</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="analise.asp"><i class="fa fa-circle-o"></i> Analise</a></li>
+          </ul>
+        </li>
         
       </ul>
     </section>
