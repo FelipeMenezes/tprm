@@ -31,7 +31,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TPRM | Analise de Solicitações</title>
+  <title>TPRM | Analise Financeira</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->  
@@ -223,7 +223,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Analise de Solicitações
+        Analise Financeira
         <small>Painel</small>
       </h1>
     </section>
@@ -253,7 +253,7 @@
             </thead>
             <tbody>
             <%
-              strSQL = "SELECT empresa.id_empresa,empresa.empresa,SUM(transacao.valor_empresa) AS valor_total_empresa,SUM(transacao.valor_avaliacao) AS valor_total_transacao,SUM(transacao.valor_empresa + transacao.valor_avaliacao) AS Total FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico group by empresa.empresa,empresa.id_empresa,transacao.valor_empresa,transacao.valor_avaliacao"
+              strSQL = "SELECT empresa.empresa,SUM(transacao.valor_empresa) AS valor_total_empresa,SUM(transacao.valor_avaliacao) AS valor_total_transacao,SUM(transacao.valor_empresa + transacao.valor_avaliacao) AS Total FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico group by empresa.empresa"
               set ObjRst = conDB.execute(strSQL)
               do while not ObjRst.EOF
             %>
