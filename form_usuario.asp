@@ -231,9 +231,11 @@ end if
               <div class="col-sm-10">
 
                 <select name="tipo_usuario" class="form-control">
-                  <option value="1">Usuário</option>
-                  <option value="2">Analista</option>
-                  <option value="3">Administrador</option>
+                  
+                  <option value="1" <%if cstr(tipo_usuario) = cstr(1) then : Response.Write("selected=""selected""") : End If%>>Usuário</option>
+                  <option value="2" <%if cstr(tipo_usuario) = cstr(2) then : Response.Write("selected=""selected""") : End If%>>Analista</option>
+                  <option value="3" <%if cstr(tipo_usuario) = cstr(3) then : Response.Write("selected=""selected""") : End If%>>Administrador</option>
+
                 </select>
 
               </div>

@@ -226,7 +226,7 @@
                         set ObjRst = conDB.execute(strSQL)
                         do while not ObjRst.EOF
                       %>
-                      <option value="<%=ObjRst("id_servico")%>"><%=ObjRst("tipo_servico")%></option>
+                      <option value="<%=ObjRst("id_servico")%>" <%if cstr(id_servico) = cstr(ObjRst("id_servico")) then : Response.Write("selected=""selected""") : End If%>><%=ObjRst("tipo_servico")%></option>
                       <%
                         ObjRst.MoveNext()
                         loop
