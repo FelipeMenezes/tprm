@@ -234,6 +234,22 @@
             </thead>
             <tbody>
             <%
+
+            Function FormataMoeda(valor)
+              sp = Mid(FormatNumber(1000, 0, -1, 0, -1),2,1)
+              sv = Mid(FormatNumber(0.1, 1, -1, 0, -1),2,1)
+              If isNumeric(valor) Then
+                v = FormatNumber (valor, 2, -1, 0, -1)
+              Else
+                v = FormatNumber (0, 2, -1, 0, -1)
+              End If
+              v = Replace(v, sp, "p")
+              v = Replace(v, sv, "v")
+              v = Replace(v, "p", ".")
+              v = Replace(v, "v", ",")
+              FormataMoeda = v
+            End Function
+
               strSQL = "SELECT * FROM empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico"
               set ObjRst = conDB.execute(strSQL)
               do while not ObjRst.EOF
@@ -242,7 +258,7 @@
               <td><%=ObjRst("empresa")%></td>
               <td><%=ObjRst("tipo_servico")%></td>
               <td><%=ObjRst("descricao")%></td>
-              <td><%=FormatCurrency(ObjRst("valor"),2)%></td>
+              <td><%=FormataMoeda(ObjRst("valor"))%></td>
               <td>
                 <a href="form_empresa.asp?id=<%=ObjRst("id_empresa")%>" class="btn btn-success" alt="Editar Empresa" title="Editar Empresa"><i class="glyphicon glyphicon-pencil"></i></a>
                 <a data-href="exc_empresa.asp?id=<%=ObjRst("id_empresa")%>" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" alt="Excluir Empresa" title="Excluir Empresa"><i class="glyphicon glyphicon-remove"></i></a>

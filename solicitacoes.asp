@@ -259,6 +259,21 @@
             
             <%
 
+            Function FormataMoeda(valor)
+              sp = Mid(FormatNumber(1000, 0, -1, 0, -1),2,1)
+              sv = Mid(FormatNumber(0.1, 1, -1, 0, -1),2,1)
+              If isNumeric(valor) Then
+                v = FormatNumber (valor, 2, -1, 0, -1)
+              Else
+                v = FormatNumber (0, 2, -1, 0, -1)
+              End If
+              v = Replace(v, sp, "p")
+              v = Replace(v, sv, "v")
+              v = Replace(v, "p", ".")
+              v = Replace(v, "v", ",")
+              FormataMoeda = v
+            End Function
+
             IF Session("tipo_usuario") = 3 then
               strSQL = "SELECT * FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico"
             else
@@ -274,7 +289,7 @@
               <td><%=ObjRst("empresa")%></td>
               <td><%=ObjRst("tipo_servico")%></td>
               <td><%=ObjRst("descricao")%></td>
-              <td><%=FormatCurrency(ObjRst("valor"),2)%></td>
+              <td><%=FormataMoeda(ObjRst("valor"))%></td>
 
               <%
 

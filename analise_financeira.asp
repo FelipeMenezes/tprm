@@ -253,15 +253,31 @@
             </thead>
             <tbody>
             <%
+
+            Function FormataMoeda(valor)
+              sp = Mid(FormatNumber(1000, 0, -1, 0, -1),2,1)
+              sv = Mid(FormatNumber(0.1, 1, -1, 0, -1),2,1)
+              If isNumeric(valor) Then
+                v = FormatNumber (valor, 2, -1, 0, -1)
+              Else
+                v = FormatNumber (0, 2, -1, 0, -1)
+              End If
+              v = Replace(v, sp, "p")
+              v = Replace(v, sv, "v")
+              v = Replace(v, "p", ".")
+              v = Replace(v, "v", ",")
+              FormataMoeda = v
+            End Function
+
               strSQL = "SELECT empresa.empresa,SUM(transacao.valor_empresa) AS valor_total_empresa,SUM(transacao.valor_avaliacao) AS valor_total_transacao,SUM(transacao.valor_empresa + transacao.valor_avaliacao) AS Total FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico group by empresa.empresa"
               set ObjRst = conDB.execute(strSQL)
               do while not ObjRst.EOF
             %>
             <tr>
               <td><%=ObjRst("empresa")%></td>
-              <td><%=FormatCurrency(ObjRst("valor_total_empresa"),2)%></td>
-              <td><%=FormatCurrency(ObjRst("valor_total_transacao"),2)%></td>
-              <td><%=FormatCurrency(ObjRst("total"),2)%></td>
+              <td><%=FormataMoeda(ObjRst("valor_total_empresa"))%></td>
+              <td><%=FormataMoeda(ObjRst("valor_total_transacao"))%></td>
+              <td><%=FormataMoeda(ObjRst("total"))%></td>
             </tr>
           <%
             ObjRst.MoveNext()
