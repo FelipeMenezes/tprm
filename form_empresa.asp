@@ -220,7 +220,7 @@
             <div class="form-group">
                  <label for="inputEmail3" class="col-sm-2 control-label">Tipo de Serviço</label>
                   <div class="col-sm-10">
-                    <select name="id_servico" class="form-control">
+                    <select name="id_servico" class="form-control" required>
                       <%
                         strSQL = "SELECT * FROM servico"
                         set ObjRst = conDB.execute(strSQL)

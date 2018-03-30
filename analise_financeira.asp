@@ -16,12 +16,12 @@
   strStatus = Request.Item("strStatus")
   strMsg = ""
   select case trim(ucase(strStatus))
-    case "INC"
-      strMsg = "Registro cadastrado com Sucesso"
-    case "ALT"
-      strMsg = "Registro alterado com Sucesso"
-    case "EXC"
-      strMsg = "Registro excluído com Sucesso"
+    case "ANA"
+      strMsg = "Solicitação em Analise"
+    case "REPRO"
+      strMsg = "Solicitação Reprovada"
+    case "APRO"
+      strMsg = "Solicitação Aprovada"
     case else
       strMsg = ""
   end select
@@ -31,7 +31,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>TPRM | Solicitar Serviço</title>
+  <title>TPRM | Analise de Solicitações</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->  
@@ -118,10 +118,10 @@
     <section class="sidebar">
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">Menu</li>
-       
+          
         <%
           if Session("tipo_usuario") = 3 then 
-        %> 
+        %>
 
         <li class="treeview">
           <a href="#">
@@ -156,7 +156,7 @@
           if Session("tipo_usuario") = 3 OR Session("tipo_usuario") = 1 then 
         %>
 
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Solicitação de Serviço</span>
             <span class="pull-right-container">
@@ -197,7 +197,7 @@
           if Session("tipo_usuario") = 3 then 
         %>
 
-        <li class="treeview">
+        <li class="active treeview">
           <a href="#">
             <i class="fa fa-tag"></i> <span>Analise Financeira</span>
             <span class="pull-right-container">
@@ -223,7 +223,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Solicitar Serviço
+        Analise de Solicitações
         <small>Painel</small>
       </h1>
     </section>
@@ -246,26 +246,22 @@
             <thead>
             <tr>
               <th>Empresa</th>
-              <th>Tipo Serviço</th>
-              <th>Descrição</th>
-              <th>Valor(R$)</th>
-              <th>Ação</th>
+              <th>Valor Total de Serviço(R$)</th>
+              <th>Valor Total de Taxa(R$)</th>
+              <th>Total(R$)</th>
             </tr>
             </thead>
             <tbody>
             <%
-              strSQL = "SELECT * FROM empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico"
+              strSQL = "SELECT empresa.id_empresa,empresa.empresa,SUM(transacao.valor_empresa) AS valor_total_empresa,SUM(transacao.valor_avaliacao) AS valor_total_transacao,SUM(transacao.valor_empresa + transacao.valor_avaliacao) AS Total FROM transacao INNER JOIN usuario ON usuario.id_usuario = transacao.id_usuario INNER JOIN empresa ON empresa.id_empresa = transacao.id_empresa INNER JOIN servico ON servico.id_servico = empresa.id_servico group by empresa.empresa,empresa.id_empresa,transacao.valor_empresa,transacao.valor_avaliacao"
               set ObjRst = conDB.execute(strSQL)
               do while not ObjRst.EOF
             %>
             <tr>
               <td><%=ObjRst("empresa")%></td>
-              <td><%=ObjRst("tipo_servico")%></td>
-              <td><%=ObjRst("descricao")%></td>
-              <td><%=FormatCurrency(ObjRst("valor"),2)%></td>
-              <td>
-                <a href="form_solicitar_servico.asp?id=<%=ObjRst("id_empresa")%>" class="btn btn-success" alt="Solicitar" title="Solicitar"><i class="glyphicon glyphicon-plus"></i></a>
-              </td>
+              <td><%=FormatCurrency(ObjRst("valor_total_empresa"),2)%></td>
+              <td><%=FormatCurrency(ObjRst("valor_total_transacao"),2)%></td>
+              <td><%=FormatCurrency(ObjRst("total"),2)%></td>
             </tr>
           <%
             ObjRst.MoveNext()
@@ -279,26 +275,6 @@
 
 
       </div>
-
-    <!-- modal Exclusão-->
-    <div class="modal fade stick-up" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header clearfix text-left">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
-            </button>
-            <h5>Confirmação <span class="semi-bold">da Empresa</span></h5>
-          </div>
-          <div class="modal-body">
-            <p>Confirmar a exclusão da Empresa?</p>
-          </div>                
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-            <a class="btn btn-danger btn-deletar">Deletar</a>
-          </div>
-        </div>
-      </div>
-    </div>
 
     </section>
     <!-- /.content -->
@@ -389,14 +365,6 @@
     })
   })
 </script>
-  <script>
-    $(function()
-    { 
-      $('#confirm-delete').on('show.bs.modal', function(e) {
-        $(this).find('.btn-deletar').attr('href', $(e.relatedTarget).data('href'));
-        });
-    });
-  </script>
 
 </body>
 </html>

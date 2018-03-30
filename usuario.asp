@@ -168,6 +168,26 @@
             <li><a href="analise.asp"><i class="fa fa-circle-o"></i> Analise</a></li>
           </ul>
         </li>
+
+        <%
+          if Session("tipo_usuario") = 3 then 
+        %>
+
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-tag"></i> <span>Analise Financeira</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="analise_financeira.asp"><i class="fa fa-circle-o"></i> Analise</a></li>
+          </ul>
+        </li>
+
+        <%
+          end if        
+        %>
         
       </ul>
     </section>
